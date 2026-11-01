@@ -10,6 +10,8 @@ python train.py --channels all --seed N        # N = 0..4; Task 1 (seed 0 after 
 python train.py --channels frontal --seed N    # Task 3
 python train.py --channels central --seed N    # Task 3 control
 python erd.py --band mu                        # Task 2 -> erd_mu.png
+python stats.py                                # read-only: Task 1/3 mean ± SD, best/worst, binomial p
+                                               # (post-fix runs only), Task 4 checks, Task 2 ERD table
 ```
 
 **Part 2** (each seed is printed and appended to `part2_transformer/results.jsonl`):
