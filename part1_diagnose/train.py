@@ -8,10 +8,12 @@ import json
 import numpy as np
 import torch
 import torch.nn as nn
-from sklearn.model_selection import train_test_split
 
 from data import build_dataset, SUBJECTS
 from model import EEGNet, count_params
+
+TEST_SUBJECTS = [9, 10]   # same held-out subjects as part2_transformer
+VAL_SUBJECTS = [7, 8]
 
 # Electrode groups for the channel-subset run (Task 3).
 # TODO: fill in "frontal" with the electrode names you choose.
@@ -59,11 +61,16 @@ def main():
     std = X.std(axis=(0, 2), keepdims=True) + 1e-6
     X = ((X - mean) / std).astype(np.float32)
 
-    # Subject-independent evaluation: hold out 20% for test, then 20% of the
-    # remainder for validation.
-    idx = np.arange(len(y))
-    tr, te = train_test_split(idx, test_size=0.2, stratify=y, random_state=args.seed)
-    tr, va = train_test_split(tr, test_size=0.2, stratify=y[tr], random_state=args.seed)
+    # Subject-independent evaluation: whole subjects go to test / val / train.
+    # Test subjects are fixed across seeds and match part2 (test on 9-10).
+    tr_s = [int(s) for s in np.unique(groups) if s not in VAL_SUBJECTS + TEST_SUBJECTS]
+    tr = np.flatnonzero(np.isin(groups, tr_s))
+    va = np.flatnonzero(np.isin(groups, VAL_SUBJECTS))
+    te = np.flatnonzero(np.isin(groups, TEST_SUBJECTS))
+    assert not set(groups[tr]) & set(groups[va]) and not set(groups[tr]) & set(groups[te]) \
+        and not set(groups[va]) & set(groups[te]), "subject in two splits"
+    assert len(tr) and len(va) and len(te), "empty split; check --subjects"
+    print(f"subjects: train={tr_s} val={VAL_SUBJECTS} test={TEST_SUBJECTS}")
 
     n_ch, n_t = X.shape[1], X.shape[2]
     model = EEGNet(n_ch, n_t)

@@ -8,6 +8,7 @@ All numbers: `python train.py --seed 0`, cumulative (each row includes the fixes
 |---|---|---|---|---|
 | 0 | none (starter) | - | - | 0.667 (n_test=84) |
 | 1 | data.py:15 | `RUNS = [5, 9, 13]` are *executed* fists/feet runs; imagery is 6/10/14. | Down: real movement gives stronger ERD plus EMG/movement artefacts, so executed trials are easier to classify than imagined ones. | 0.619 (n_test=84) |
+| 2 | train.py:62-66 | `train_test_split` on *trials* put every subject in train, val and test, so "held-out people" was false. Now split by subject: test=[9,10] (fixed, same as part2), val=[7,8], train=1-6. | Down: with trial-level splits the model learns each subject's idiosyncratic EEG (impedances, head shape, alpha level) and recognises it at test; across subjects that shortcut is gone. | 0.560 (n_test=84) |
 
 ## Task 2 - ERD
 
