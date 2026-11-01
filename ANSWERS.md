@@ -61,6 +61,26 @@ Per-timestep tokens (vanilla) make attention model WHEN things happen: 482 token
 
 ## Results (best / worst / mean across seeds)
 
-Note on the vanilla transformer: it could not be trained on this laptop (14 GB RAM, ~4 GB free commit memory). It ran out of memory in the first training batch of seed 0 with seeds 0-4, again with 0-4, and again with seeds 0-2: `DefaultCPUAllocator: not enough memory: you tried to allocate 237899776 bytes` = 64 trials × 4 heads × 482 × 482 tokens × 4 bytes, one attention matrix of one layer, of which 3 layers' worth must be kept for backprop (and ~950 MB per layer at the batch-256 eval). The OOM is itself the O(T²) cost of per-timestep tokens; the channel-token model's attention is 65 × 65 (~55× fewer entries).
+Note on the vanilla transformer: The vanilla transformer OOM'd in the first TRAINING batch (forward pass, attention tensor ~238 MB, batch 64 × 4 heads × 482 × 482 floats; several kept for backprop × 3 layers) on this machine with ~4 GB free RAM: the O(T²) cost is a practical limit, not just a theoretical one. Exact error: `DefaultCPUAllocator: not enough memory: you tried to allocate 237899776 bytes`; attempted with seeds 0-4 (twice) and 0-2, each failing in the first batch of seed 0. The channel-token model's attention is 65 × 65 (~55× fewer entries).
+
+`python main.py` (train subjects 1-8, test 9-10, n_test = 90, majority baseline 0.511, seeds 0-4, 40 epochs; SD with ddof=1). "Best-over-epochs" is the max test accuracy over epochs, i.e. selected on the test set; **final-epoch is the honest number**.
+
+| model | params | tokens | attn size (per head, per layer) | best-over-epochs mean / min / max | final-epoch mean ± SD, min, max |
+|---|---|---|---|---|---|
+| EEGNet | 2,610 | n/a (conv) | n/a | 0.647 / 0.611 / 0.711 | **0.613 ± 0.053**, 0.556, 0.667 |
+| Vanilla transformer | 135,746 | 482 | 482×482 | OOM | OOM (first batch of seed 0) |
+| Starter YourModel (temporal patches, 32 samples) | 232,898 | 16 | 16×16 | 0.602 / 0.589 / 0.622 | 0.527 ± 0.050, 0.456, 0.578 |
+| **Channel tokens + 3D position (real)** | 19,234 | 65 | 65×65 | 0.544 / 0.522 / 0.600 | **0.418 ± 0.047**, 0.367, 0.478 |
+| Channel tokens + 3D position (shuffled control) | 19,234 | 65 | 65×65 | 0.553 / 0.533 / 0.589 | 0.464 ± 0.048, 0.389, 0.500 |
+
+The bet failed: final-epoch 0.418 ± 0.047 (best 0.478, worst 0.367) with real positions, below the 0.511 majority baseline on all 5 seeds, and not more stable than the starter (SD 0.047 vs 0.050). Real vs shuffled (0.418 vs 0.464) differ by ~1 SD with n=5, so geometry neither helped nor demonstrably hurt. Attention (seed 0, `python attention_map.py`) went to parietal-occipital electrodes (P7, PO3, PO7, O2), not C3/Cz/C4, falsifying the second prediction; it was weakly selective (top 0.0275 vs uniform 0.0154) and nearly identical for both classes.
+
+Why: (1) the 7-30 Hz band contains both motor mu and occipital alpha at the same frequency; per-channel power tokens can only separate them by location, and occipital alpha is the largest rhythm, tied to visual cue processing and arousal, not imagery. (2) Absolute log-power per electrode carries subject-specific scale (skull, impedance, alpha amplitude), so a rule learned on subjects 1-8 can invert on 9-10, which is consistent with systematically below-chance rather than chance-level scores. EEGNet's depthwise spatial filters learn weighted DIFFERENCES between electrodes, which cancel per-subject gain; that, not attention vs convolution, is the likely reason it wins. (3) Best-over-epochs (0.54-0.65 for every model) hides this: the channel-token model's best-over-epochs averaged 0.544, but its final-epoch score was 0.418, as it fit the training subjects. Lesson: the token axis was a reasonable bet, but token CONTENT must be subject-invariant.
+
+What I'd check next: tokens normalised per trial (log-power minus the trial's mean log-power across electrodes, i.e. a relative scalp topography that removes per-subject gain), or ERD relative to a pre-cue baseline as the token feature; per-epoch test curves to confirm the drift below chance; and the same model with occipital channels removed to test whether visual alpha drives the attention.
+
+80 subjects: the 55x token/memory saving still matters at any data size, but the inductive bias matters less with more data. More subjects would also average over subject-specific scale, so the invariance problem would shrink but not disappear. And because these tokens collapse time into log-power, they discard timing information a larger dataset could exploit.
 
 ## Figure
+
+`part2_transformer/figure.png`: t-SNE of the channel-token model's CLS embeddings (seed 0, real positions) for the 90 test trials of subjects 9-10; fists and feet are interleaved within every cluster, so whatever structure the embedding has is not class structure, consistent with the below-chance accuracy. `part2_transformer/attention_topomap.png`: last-layer CLS->electrode attention averaged over test trials and heads, peaking over left parietal-occipital and occipital sites (top-5 marked) with the central strip near or below average.
