@@ -66,6 +66,9 @@ def main():
         and not set(groups[va]) & set(groups[te]), "subject in two splits"
     assert len(tr) and len(va) and len(te), "empty split; check --subjects"
     print(f"subjects: train={tr_s} val={VAL_SUBJECTS} test={TEST_SUBJECTS}")
+    te_counts = np.bincount(y[te], minlength=2)
+    majority = te_counts.max() / len(te)   # chance level for a constant predictor
+    print(f"test class counts (hands, feet)={te_counts.tolist()}, majority baseline={majority:.3f}")
 
     # Per-channel z-scoring, statistics from TRAIN subjects only.
     mean = X[tr].mean(axis=(0, 2), keepdims=True)
@@ -96,7 +99,8 @@ def main():
 
     model.load_state_dict(best_state)
     result = dict(channels=args.channels, seed=args.seed, best_epoch=best_ep,
-                  val_acc=best_acc, test_acc=evaluate(model, X[te], y[te]), n_test=len(te))
+                  val_acc=best_acc, test_acc=evaluate(model, X[te], y[te]), n_test=len(te),
+                  majority=majority)
     print(json.dumps(result))
     with open("results.jsonl", "a") as f:
         f.write(json.dumps(result) + "\n")
