@@ -56,11 +56,6 @@ def main():
     print(f"data: {X.shape}, subjects={len(np.unique(groups))}, "
           f"class balance={np.bincount(y)}")
 
-    # Per-channel z-scoring.
-    mean = X.mean(axis=(0, 2), keepdims=True)
-    std = X.std(axis=(0, 2), keepdims=True) + 1e-6
-    X = ((X - mean) / std).astype(np.float32)
-
     # Subject-independent evaluation: whole subjects go to test / val / train.
     # Test subjects are fixed across seeds and match part2 (test on 9-10).
     tr_s = [int(s) for s in np.unique(groups) if s not in VAL_SUBJECTS + TEST_SUBJECTS]
@@ -71,6 +66,11 @@ def main():
         and not set(groups[va]) & set(groups[te]), "subject in two splits"
     assert len(tr) and len(va) and len(te), "empty split; check --subjects"
     print(f"subjects: train={tr_s} val={VAL_SUBJECTS} test={TEST_SUBJECTS}")
+
+    # Per-channel z-scoring, statistics from TRAIN subjects only.
+    mean = X[tr].mean(axis=(0, 2), keepdims=True)
+    std = X[tr].std(axis=(0, 2), keepdims=True) + 1e-6
+    X = ((X - mean) / std).astype(np.float32)
 
     n_ch, n_t = X.shape[1], X.shape[2]
     model = EEGNet(n_ch, n_t)
