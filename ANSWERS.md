@@ -1,3 +1,28 @@
+# How to reproduce
+
+Setup (Python 3.13, CPU): `python -m venv .venv`, then `pip install -r part1_diagnose/requirements.txt -r part2_transformer/requirements.txt`. The first run downloads PhysioNet EEGBCI to `~/mne_data`.
+
+**Part 1** (each `train.py` run prints its result and appends one line to `part1_diagnose/results.jsonl`):
+
+```bash
+cd part1_diagnose
+python train.py --channels all --seed N        # N = 0..4; Task 1 (seed 0 after each fix) and 5-seed summary
+python train.py --channels frontal --seed N    # Task 3
+python train.py --channels central --seed N    # Task 3 control
+python erd.py --band mu                        # Task 2 -> erd_mu.png
+```
+
+**Part 2** (each seed is printed and appended to `part2_transformer/results.jsonl`):
+
+```bash
+cd part2_transformer
+python main.py                                 # all models, seeds 0-4, saves figure.png
+python main.py --models eegnet                 # or: vanilla / yours (one or more), to run single models
+python attention_map.py --seed 0               # attention_topomap.png + top-5 attended electrodes
+```
+
+The vanilla transformer needs more than ~4 GB of free RAM; it ran out of memory on this machine (see Part 2 Results).
+
 # Part 1
 
 ## Task 1 - Bugs (before/after accuracy + table: #, file:line, what's wrong, effect on accuracy and why)
