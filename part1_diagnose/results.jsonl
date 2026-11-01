@@ -1,0 +1,22 @@
+{"channels": "all", "seed": 0, "best_epoch": 17, "test_acc": 0.6666666666666666, "n_test": 84}
+{"channels": "all", "seed": 0, "best_epoch": 13, "test_acc": 0.6190476190476191, "n_test": 84}
+{"channels": "all", "seed": 0, "best_epoch": 4, "test_acc": 0.5595238095238095, "n_test": 84}
+{"channels": "all", "seed": 0, "best_epoch": 7, "val_acc": 0.7023809523809523, "test_acc": 0.5238095238095238, "n_test": 84}
+{"channels": "all", "seed": 0, "best_epoch": 8, "val_acc": 0.7023809523809523, "test_acc": 0.5238095238095238, "n_test": 84}
+{"channels": "all", "seed": 0, "best_epoch": 8, "val_acc": 0.7023809523809523, "test_acc": 0.5238095238095238, "n_test": 84}
+{"channels": "all", "seed": 0, "best_epoch": 22, "val_acc": 0.7222222222222222, "test_acc": 0.4777777777777778, "n_test": 90}
+{"channels": "all", "seed": 0, "best_epoch": 22, "val_acc": 0.7222222222222222, "test_acc": 0.4777777777777778, "n_test": 90, "majority": 0.5111111111111111}
+{"channels": "all", "seed": 1, "best_epoch": 6, "val_acc": 0.7111111111111111, "test_acc": 0.5777777777777777, "n_test": 90, "majority": 0.5111111111111111}
+{"channels": "all", "seed": 2, "best_epoch": 13, "val_acc": 0.7, "test_acc": 0.5777777777777777, "n_test": 90, "majority": 0.5111111111111111}
+{"channels": "all", "seed": 3, "best_epoch": 29, "val_acc": 0.6777777777777778, "test_acc": 0.5444444444444444, "n_test": 90, "majority": 0.5111111111111111}
+{"channels": "frontal", "seed": 0, "best_epoch": 5, "val_acc": 0.7666666666666667, "test_acc": 0.5444444444444444, "n_test": 90, "majority": 0.5111111111111111}
+{"channels": "frontal", "seed": 1, "best_epoch": 21, "val_acc": 0.7222222222222222, "test_acc": 0.5777777777777777, "n_test": 90, "majority": 0.5111111111111111}
+{"channels": "all", "seed": 4, "best_epoch": 5, "val_acc": 0.6777777777777778, "test_acc": 0.4444444444444444, "n_test": 90, "majority": 0.5111111111111111}
+{"channels": "frontal", "seed": 2, "best_epoch": 9, "val_acc": 0.8111111111111111, "test_acc": 0.5333333333333333, "n_test": 90, "majority": 0.5111111111111111}
+{"channels": "frontal", "seed": 3, "best_epoch": 20, "val_acc": 0.7333333333333333, "test_acc": 0.5777777777777777, "n_test": 90, "majority": 0.5111111111111111}
+{"channels": "frontal", "seed": 4, "best_epoch": 25, "val_acc": 0.7444444444444445, "test_acc": 0.5888888888888889, "n_test": 90, "majority": 0.5111111111111111}
+{"channels": "central", "seed": 0, "best_epoch": 22, "val_acc": 0.7111111111111111, "test_acc": 0.5111111111111111, "n_test": 90, "majority": 0.5111111111111111}
+{"channels": "central", "seed": 1, "best_epoch": 5, "val_acc": 0.6888888888888889, "test_acc": 0.6222222222222222, "n_test": 90, "majority": 0.5111111111111111}
+{"channels": "central", "seed": 2, "best_epoch": 19, "val_acc": 0.8, "test_acc": 0.5333333333333333, "n_test": 90, "majority": 0.5111111111111111}
+{"channels": "central", "seed": 3, "best_epoch": 17, "val_acc": 0.7444444444444445, "test_acc": 0.5777777777777777, "n_test": 90, "majority": 0.5111111111111111}
+{"channels": "central", "seed": 4, "best_epoch": 3, "val_acc": 0.7777777777777778, "test_acc": 0.5, "n_test": 90, "majority": 0.5111111111111111}

@@ -16,10 +16,14 @@ TEST_SUBJECTS = [9, 10]   # same held-out subjects as part2_transformer
 VAL_SUBJECTS = [7, 8]
 
 # Electrode groups for the channel-subset run (Task 3).
-# TODO: fill in "frontal" with the electrode names you choose.
+# frontal: prefrontal/frontal sites closest to the eyes (EOG pickup).
+# central: sensorimotor strip, same size (17), as a control.
 CHANNEL_GROUPS = {
     "all": None,
-    "frontal": [],
+    "frontal": ["Fp1", "Fpz", "Fp2", "AF7", "AF3", "AFz", "AF4", "AF8",
+                "F7", "F5", "F3", "F1", "Fz", "F2", "F4", "F6", "F8"],
+    "central": ["FC3", "FC1", "FCz", "FC2", "FC4", "C5", "C3", "C1", "Cz",
+                "C2", "C4", "C6", "CP3", "CP1", "CPz", "CP2", "CP4"],
 }
 
 
