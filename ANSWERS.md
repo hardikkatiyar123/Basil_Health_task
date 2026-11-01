@@ -16,6 +16,16 @@ All numbers: `python train.py --seed 0`, cumulative (each row includes the fixes
 
 ## Task 2 - ERD
 
+`python erd.py --band mu` (8-13 Hz, subjects 1-10, baseline -1.5..-0.5 s) -> `part1_diagnose/erd_mu.png`.
+Mean ERD over 0.5-4 s (mean across 10 subjects, computed from the same curves):
+
+| | C3 | Cz | C4 |
+|---|---|---|---|
+| hands | -13.7% | -4.0% | -8.6% |
+| feet | -0.1% | -4.9% | -4.8% |
+
+Hands imagery gives a sustained mu ERD over the lateral hand areas (C3 strongest, C4 weaker), while feet imagery leaves C3/C4 near baseline; this matches the hand knob lying laterally on the precentral gyrus and the foot area lying medially. At Cz the feet ERD is only marginally deeper than hands (-4.9 vs -4.0%), so the expected "feet focal at Cz" effect is barely visible. Cz is weaker than expected because the foot representation sits on the mesial wall inside the interhemispheric fissure, so its generators are deep and tangentially oriented and project poorly to the scalp; Cz also picks up hand-area activity by volume conduction, and foot imagery is harder for naive subjects (between-subject SD ~15-24% dwarfs the class differences, with only ~22 trials/class/subject). The sharp positive peak at ~0.1-0.4 s in every trace (+23 to +44%) is the phase-locked visual evoked response to the cue leaking into 8-13 Hz power, not induced mu activity.
+
 ## Task 3 - What is the model using?
 
 ## Task 4 - Short answers
