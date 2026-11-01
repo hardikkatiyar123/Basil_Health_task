@@ -53,6 +53,8 @@ Frontal-only (17 electrodes over the forehead, far from motor cortex) reaches va
 
 ## Hypothesis (written before coding)
 
+Fists-vs-feet information is spatial and sustained (hand-area ERD present vs absent), so attending across 64 electrode tokens with 3D scalp-position encoding will be more stable across seeds than attending across 481 timesteps, and its attention should concentrate on central electrodes (C3/C4/Cz), not frontal ones.
+
 ## What I changed and why
 
 ## Results (best / worst / mean across seeds)
