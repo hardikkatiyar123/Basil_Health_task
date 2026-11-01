@@ -8,3 +8,13 @@
 {"model": "YourModel[starter-patch32]", "seed": 2, "final_acc": 0.5777777777777777, "best_over_epochs": 0.5888888888888889, "n_test": 90}
 {"model": "YourModel[starter-patch32]", "seed": 3, "final_acc": 0.5, "best_over_epochs": 0.6, "n_test": 90}
 {"model": "YourModel[starter-patch32]", "seed": 4, "final_acc": 0.5666666666666667, "best_over_epochs": 0.6, "n_test": 90}
+{"model": "YourModel[pos=real]", "seed": 0, "final_acc": 0.3888888888888889, "best_over_epochs": 0.6, "n_test": 90}
+{"model": "YourModel[pos=real]", "seed": 1, "final_acc": 0.36666666666666664, "best_over_epochs": 0.5222222222222223, "n_test": 90}
+{"model": "YourModel[pos=real]", "seed": 2, "final_acc": 0.4777777777777778, "best_over_epochs": 0.5222222222222223, "n_test": 90}
+{"model": "YourModel[pos=real]", "seed": 3, "final_acc": 0.4, "best_over_epochs": 0.5333333333333333, "n_test": 90}
+{"model": "YourModel[pos=real]", "seed": 4, "final_acc": 0.45555555555555555, "best_over_epochs": 0.5444444444444444, "n_test": 90}
+{"model": "YourModel[pos=shuffled]", "seed": 0, "final_acc": 0.3888888888888889, "best_over_epochs": 0.5888888888888889, "n_test": 90}
+{"model": "YourModel[pos=shuffled]", "seed": 1, "final_acc": 0.5, "best_over_epochs": 0.5444444444444444, "n_test": 90}
+{"model": "YourModel[pos=shuffled]", "seed": 2, "final_acc": 0.4888888888888889, "best_over_epochs": 0.5333333333333333, "n_test": 90}
+{"model": "YourModel[pos=shuffled]", "seed": 3, "final_acc": 0.4444444444444444, "best_over_epochs": 0.5333333333333333, "n_test": 90}
+{"model": "YourModel[pos=shuffled]", "seed": 4, "final_acc": 0.5, "best_over_epochs": 0.5666666666666667, "n_test": 90}
