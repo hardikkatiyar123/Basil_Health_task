@@ -14,6 +14,7 @@ State your hypothesis in the README. Do not quietly edit the vanilla
 transformer in models.py — the contrast is the point.
 """
 import argparse
+import json
 import numpy as np
 import torch
 
@@ -72,15 +73,25 @@ class YourModel(nn.Module):
 # =========================================================================== #
 
 
-def run_across_seeds(build_fn, Xtr, ytr, Xte, yte, seeds, device, **kw):
-    accs = []
+def run_across_seeds(name, build_fn, Xtr, ytr, Xte, yte, seeds, device, **kw):
+    """Returns (best_over_epochs, final_epoch) arrays. `best` is the max test acc
+    over epochs, i.e. selected on the test set (optimistic); `final` is the
+    honest number. Each run is appended to results.jsonl."""
+    bests, finals = [], []
     for s in seeds:
         set_seed(s)
         model = build_fn()
-        best, _ = train_model(model, Xtr, ytr, Xte, yte, device=device, **kw)
-        accs.append(best)
-        print(f"  seed {s}: best test acc {best:.3f}")
-    return np.array(accs)
+        best, final = train_model(model, Xtr, ytr, Xte, yte, device=device, **kw)
+        bests.append(best); finals.append(final)
+        print(f"  seed {s}: final-epoch test acc {final:.3f}  (best-over-epochs {best:.3f})")
+        with open("results.jsonl", "a") as f:
+            f.write(json.dumps(dict(model=name, seed=s, final_acc=final,
+                                    best_over_epochs=best, n_test=len(yte))) + "\n")
+    bests, finals = np.array(bests), np.array(finals)
+    print(f"{name}: final-epoch mean {finals.mean():.3f} ± {finals.std(ddof=1) if len(finals) > 1 else 0:.3f}  "
+          f"min {finals.min():.3f}  max {finals.max():.3f} | best-over-epochs mean {bests.mean():.3f}  "
+          f"min {bests.min():.3f}  max {bests.max():.3f}")
+    return bests, finals
 
 
 def save_figure(model, Xte, yte, device, path="figure.png"):
@@ -112,8 +123,11 @@ def save_figure(model, Xte, yte, device, path="figure.png"):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--epochs", type=int, default=40)
-    ap.add_argument("--seeds", type=int, nargs="+", default=[0, 1, 2])
+    ap.add_argument("--seeds", type=int, nargs="+", default=[0, 1, 2, 3, 4])
+    ap.add_argument("--models", nargs="+", choices=["eegnet", "vanilla", "yours"],
+                    default=["eegnet", "vanilla", "yours"])
     args = ap.parse_args()
+    print(f"seeds: {args.seeds}  epochs: {args.epochs}  models: {args.models}")
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"device: {device}")
@@ -122,35 +136,28 @@ def main():
     Xtr, ytr, Xte, yte = load_data()
     C, T = Xtr.shape[1], Xtr.shape[2]
     print(f"train {Xtr.shape}  test {Xte.shape}  "
-          f"(class balance train {ytr.mean():.2f} / test {yte.mean():.2f})")
+          f"(class balance train {ytr.mean():.2f} / test {yte.mean():.2f}, "
+          f"majority baseline {max(yte.mean(), 1 - yte.mean()):.3f})")
 
-    print("\n=== Baseline 1: EEGNet (conv priors) ===")
-    set_seed(0)
-    net = EEGNet(C, T)
-    print(f"params: {count_params(net):,}")
-    best, _ = train_model(net, Xtr, ytr, Xte, yte, epochs=args.epochs,
-                          device=device, verbose=True)
-    print(f"EEGNet best test acc: {best:.3f}")
+    if "eegnet" in args.models:
+        print("\n=== Baseline 1: EEGNet (conv priors) ===")
+        print(f"params: {count_params(EEGNet(C, T)):,}")
+        run_across_seeds("EEGNet", lambda: EEGNet(C, T),
+                         Xtr, ytr, Xte, yte, args.seeds, device, epochs=args.epochs)
 
-    print("\n=== Baseline 2: vanilla transformer (no EEG prior) ===")
-    set_seed(0)
-    vit = VanillaEEGTransformer(C, T)
-    print(f"params: {count_params(vit):,}")
-    accs_v = run_across_seeds(lambda: VanillaEEGTransformer(C, T),
-                              Xtr, ytr, Xte, yte, args.seeds, device,
-                              epochs=args.epochs)
-    print(f"vanilla transformer: best {accs_v.max():.3f}  "
-          f"worst {accs_v.min():.3f}  mean {accs_v.mean():.3f}")
+    if "vanilla" in args.models:
+        print("\n=== Baseline 2: vanilla transformer (no EEG prior) ===")
+        print(f"params: {count_params(VanillaEEGTransformer(C, T)):,}")
+        run_across_seeds("VanillaEEGTransformer", lambda: VanillaEEGTransformer(C, T),
+                         Xtr, ytr, Xte, yte, args.seeds, device, epochs=args.epochs)
+
+    if "yours" not in args.models:
+        return
 
     print("\n=== YOUR MODEL ===")
-    set_seed(0)
-    ym = YourModel(C, T)
-    print(f"params: {count_params(ym):,}")
-    accs = run_across_seeds(lambda: YourModel(C, T),
-                            Xtr, ytr, Xte, yte, args.seeds, device,
-                            epochs=args.epochs)
-    print(f"your model: best {accs.max():.3f}  worst {accs.min():.3f}  "
-          f"mean {accs.mean():.3f}  std {accs.std():.3f}")
+    print(f"params: {count_params(YourModel(C, T)):,}")
+    run_across_seeds("YourModel", lambda: YourModel(C, T),
+                     Xtr, ytr, Xte, yte, args.seeds, device, epochs=args.epochs)
 
     print("\nsaving figure...")
     set_seed(0)

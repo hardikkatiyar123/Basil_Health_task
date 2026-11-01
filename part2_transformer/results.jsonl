@@ -1,0 +1,10 @@
+{"model": "EEGNet", "seed": 0, "final_acc": 0.5555555555555556, "best_over_epochs": 0.6111111111111112, "n_test": 90}
+{"model": "EEGNet", "seed": 1, "final_acc": 0.5666666666666667, "best_over_epochs": 0.6111111111111112, "n_test": 90}
+{"model": "EEGNet", "seed": 2, "final_acc": 0.6111111111111112, "best_over_epochs": 0.6111111111111112, "n_test": 90}
+{"model": "EEGNet", "seed": 3, "final_acc": 0.6666666666666666, "best_over_epochs": 0.6888888888888889, "n_test": 90}
+{"model": "EEGNet", "seed": 4, "final_acc": 0.6666666666666666, "best_over_epochs": 0.7111111111111111, "n_test": 90}
+{"model": "YourModel[starter-patch32]", "seed": 0, "final_acc": 0.45555555555555555, "best_over_epochs": 0.6, "n_test": 90}
+{"model": "YourModel[starter-patch32]", "seed": 1, "final_acc": 0.5333333333333333, "best_over_epochs": 0.6222222222222222, "n_test": 90}
+{"model": "YourModel[starter-patch32]", "seed": 2, "final_acc": 0.5777777777777777, "best_over_epochs": 0.5888888888888889, "n_test": 90}
+{"model": "YourModel[starter-patch32]", "seed": 3, "final_acc": 0.5, "best_over_epochs": 0.6, "n_test": 90}
+{"model": "YourModel[starter-patch32]", "seed": 4, "final_acc": 0.5666666666666667, "best_over_epochs": 0.6, "n_test": 90}

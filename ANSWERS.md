@@ -59,4 +59,6 @@ Fists-vs-feet information is spatial and sustained (hand-area ERD present vs abs
 
 ## Results (best / worst / mean across seeds)
 
+Note on the vanilla transformer: it could not be trained on this laptop (14 GB RAM, ~4 GB free commit memory). It ran out of memory in the first training batch of seed 0 with seeds 0-4, again with 0-4, and again with seeds 0-2: `DefaultCPUAllocator: not enough memory: you tried to allocate 237899776 bytes` = 64 trials × 4 heads × 482 × 482 tokens × 4 bytes, one attention matrix of one layer, of which 3 layers' worth must be kept for backprop (and ~950 MB per layer at the batch-256 eval). The OOM is itself the O(T²) cost of per-timestep tokens; the channel-token model's attention is 65 × 65 (~55× fewer entries).
+
 ## Figure
