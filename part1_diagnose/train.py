@@ -89,15 +89,14 @@ def main():
             xb, yb = torch.from_numpy(X[b]), torch.from_numpy(y[b])
             opt.zero_grad(); loss = loss_fn(model(xb), yb); loss.backward(); opt.step()
         va_acc = evaluate(model, X[va], y[va])
-        te_acc = evaluate(model, X[te], y[te])
-        if te_acc > best_acc:   # keep the best checkpoint
-            best_acc, best_ep = te_acc, ep
+        if va_acc > best_acc:   # keep the best checkpoint (on val; test is untouched)
+            best_acc, best_ep = va_acc, ep
             best_state = {k: v.clone() for k, v in model.state_dict().items()}
-        print(f"epoch {ep:3d}  loss {loss.item():.3f}  val {va_acc:.3f}  test {te_acc:.3f}")
+        print(f"epoch {ep:3d}  loss {loss.item():.3f}  val {va_acc:.3f}")
 
     model.load_state_dict(best_state)
     result = dict(channels=args.channels, seed=args.seed, best_epoch=best_ep,
-                  test_acc=evaluate(model, X[te], y[te]), n_test=len(te))
+                  val_acc=best_acc, test_acc=evaluate(model, X[te], y[te]), n_test=len(te))
     print(json.dumps(result))
     with open("results.jsonl", "a") as f:
         f.write(json.dumps(result) + "\n")
