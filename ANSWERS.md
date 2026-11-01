@@ -32,7 +32,22 @@ Hands imagery gives a sustained mu ERD over the lateral hand areas (C3 strongest
 
 ## Task 3 - What is the model using?
 
+`python train.py --channels {all,frontal,central} --seed {0..4}`; val = subjects 7-8, test = subjects 9-10 (n=90 each), majority baseline 0.511, SD with ddof=1.
+frontal = Fp1 Fpz Fp2 AF7 AF3 AFz AF4 AF8 F7 F5 F3 F1 Fz F2 F4 F6 F8; central (control, same size) = FC3 FC1 FCz FC2 FC4 C5 C3 C1 Cz C2 C4 C6 CP3 CP1 CPz CP2 CP4.
+
+| channels | val_acc mean ± SD | val best / worst | test_acc mean ± SD | test best / worst | p (test mean vs 0.511, one-sided binomial) |
+|---|---|---|---|---|---|
+| all (64) | 0.698 ± 0.020 | 0.722 / 0.678 | 0.524 ± 0.061 | 0.578 / 0.444 | 0.46 (47/90) |
+| frontal (17) | 0.756 ± 0.035 | 0.811 / 0.722 | 0.564 ± 0.024 | 0.589 / 0.533 | 0.17 (51/90) |
+| central (17) | 0.744 ± 0.046 | 0.800 / 0.689 | 0.549 ± 0.051 | 0.622 / 0.500 | 0.30 (49/90) |
+
+Frontal-only (17 electrodes over the forehead, far from motor cortex) reaches val 0.756 ± 0.035, at least as high as all channels (0.698 ± 0.020) and central (0.744 ± 0.046); on the test pair (9-10) all three are at chance. A motor-imagery decoder should not get its best score from the forehead, so the model can, and likely does, exploit a non-brain signal: vertical eye movements (EOG), because the fists target is at the top of the screen and the feet target at the bottom, producing opposite-polarity potentials largest at Fp1/Fp2/AF (blinks/frontalis EMG may add to it). Caveats: both 17-channel subsets beat all 64 channels, so part of the gain is less overfitting from fewer inputs, and the central group's FC row also picks up some EOG; this does not prove the all-channel model uses only the eyes, but it cannot be trusted as a pure motor decoder until ocular activity is removed (ICA/EOG regression, or central cue presentation). Val selected the checkpoint, so val numbers are optimistic, but equally so for all three groups.
+
 ## Task 4 - Short answers
+
+1. 58% of 45 = 26 correct. Under H0 p=0.5, P(X>=26) ≈ 0.19, so not above chance; at n=45 you need 29/45 (64%) for p<0.05. Check with a binomial test against the majority-class rate, or a permutation test (shuffle labels, retrain/re-score, see where 58% falls in the null distribution).
+2. Spatial filters: for each of the F1 temporal (frequency) filters it learns D weightings across all electrodes, like a learned CSP (e.g. weighting C3/C4 against neighbours to extract mu-band hand-area ERD). `groups=F1` ties each spatial filter to one frequency band and keeps parameters tiny.
+3. Present both cues at the same central location (symbol/word at fixation) so gaze doesn't differ by class; in analysis, remove ocular components with ICA/EOG regression or exclude frontal channels and check accuracy holds.
 
 # Part 2
 
